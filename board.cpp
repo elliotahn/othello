@@ -178,3 +178,61 @@ void Board::setBoard(char data[]) {
         }
     }
 }
+
+/*
+ * Calculate the board score for a given side.
+ *
+ * The scoring method we use is much more sophisticated than counting the
+ * difference between white (black) and black (white). We use this naive
+ * scoring method when there are no valid moves to play on the board.
+ *
+ * Otherwise, our scoring highly rewards capturing corners. However, the
+ * scoring penalizes pieces that are placed next to the corners (which would
+ * make it vulnerable to the opponent capturing the corners).
+ *
+ * Our scoring rewards placing pieces two spaces removed from the corners
+ * (this would be squares
+ * (0, 1), (1, 0), (1, 1)
+ * (6, 0), (7, 1), (6, 1)
+ * (0, 6), (1, 7), (1, 6)
+ * (6, 7), (7, 6), (6, 6)
+ * The diagonals (1, 1), (6, 1), (1, 6), and (6, 6) are worth less because
+ * edges are better.
+ */
+int Board::board_score(Side side)
+{
+    // Count the difference in white and black squares.
+    score = countBlack() - countWhite();
+
+    if (side == WHITE)
+    {
+        score *= - 1;
+    }
+
+    // If the board is done, return a guaranteed score.
+
+    if (isDone())
+    {
+        if (score > 0)
+        {
+            return 1000;
+        }
+        else if (score == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return -1000;
+        }
+    }
+
+    // Otherwise, give scores that reward capturing corners. The corners are
+    // squares 0, 7, 56, and 63.
+    int corners[4] = {0, 7, 56, 63};
+    for (int i = 0; i < 4; i++)
+    {
+        if (taken[corners[i]])
+    }
+
+}
