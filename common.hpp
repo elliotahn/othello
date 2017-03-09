@@ -1,5 +1,5 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef __COMMON_HPP__
+#define __COMMON_HPP__
 
 enum Side { 
     WHITE, BLACK

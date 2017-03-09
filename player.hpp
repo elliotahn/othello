@@ -1,16 +1,20 @@
-#ifndef __PLAYER_H__
-#define __PLAYER_H__
+#ifndef __PLAYER_HPP__
+#define __PLAYER_HPP__
 
-#include <iostream>
-#include "common.hpp"
-#include "board.hpp"
-using namespace std;
+#include "dtree.hpp"
 
 class Player {
-
+private:
+	//Dtree * dtree;
+	Side pside;
 public:
+
+	Dtree * dtree;
     Player(Side side);
+    Player(Side side, Board * board);
     ~Player();
+
+    void printboardplayer();
 
     Move *doMove(Move *opponentsMove, int msLeft);
 

@@ -1,7 +1,5 @@
 #include <iostream>
-#include "common.hpp"
 #include "player.hpp"
-#include "board.hpp"
 
 // Use this file to test your minimax implementation (2-ply depth, with a
 // heuristic of the difference in number of pieces).
@@ -23,7 +21,7 @@ int main(int argc, char *argv[]) {
     board->setBoard(boardData);
 
     // Initialize player as the white player, and set testing_minimax flag.
-    Player *player = new Player(WHITE);
+    Player *player = new Player(WHITE, board);
     player->testingMinimax = true;
 
 
@@ -46,6 +44,8 @@ int main(int argc, char *argv[]) {
         }
         std::cout << ", expected (1, 1)" << std::endl;
     }
+
+    delete player;
 
     return 0;
 }

@@ -5,9 +5,13 @@
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish
  * within 30 seconds.
  */
-Player::Player(Side side) {
+Player::Player(Side side, Board * board) {
     // Will be set to true in test_minimax.cpp.
+    dtree = new Dtree(board, nullptr, side);
+    pside = side;
+
     testingMinimax = false;
+
 
     /*
      * TODO: Do any initialization you need to do here (setting up the board,
@@ -16,10 +20,18 @@ Player::Player(Side side) {
      */
 }
 
+Player::Player(Side side) {
+    dtree = new Dtree(side);
+    pside = side;
+
+    testingMinimax = false;
+}
+
 /*
  * Destructor for the player.
  */
 Player::~Player() {
+    delete dtree;
 }
 
 /*
@@ -40,5 +52,18 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    return nullptr;
+    if (dtree->has_moves())
+    {
+        Side other = (pside == BLACK) ? WHITE : BLACK;
+        dtree->SimpleDoMove(opponentsMove, other);
+    }
+    else
+    {
+        dtree->DoMove(opponentsMove);
+    }
+    dtree->init_FindMoves(pside);
+
+    Move * return_move = dtree->chooseMove(pside);
+
+    return return_move;
 }
