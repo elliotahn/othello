@@ -81,7 +81,7 @@ void Dtree::FindMoves(Dnode * node, Side s)
 			}
 			else
 			{
-				is_valid = false;
+				//is_valid = false;
 				delete newmove;
 			}
 			/*std::cerr << "Move: (" << i << ", " << j << ")";
