@@ -333,8 +333,9 @@ void Board::setright(int newright) {
 /*
  * Draws the current state of the board out for debugging purposes
  */
-/*void Board::draw()
+void Board::draw()
 {
+    std::cerr << "\n" << endl;
     for(int x = 0; x < 8; x++)
     {
         for(int y = 0; y < 8; y++)
@@ -358,36 +359,7 @@ void Board::setright(int newright) {
 
         std::cerr << std::endl;
     }
-}*/
-
-void Board::draw()
-{
-    cout << "\n" << endl;
-    for(int x = 0; x < 8; x++)
-    {
-        for(int y = 0; y < 8; y++)
-        {
-            if(taken[y + x * 8])
-            {
-                if(black[y + x * 8])
-                {
-                    std::cout << " B ";
-                }
-                else
-                {
-                    std::cout << " W ";
-                }
-            }
-            else
-            {
-                std::cout << " * ";
-            }
-        }
-
-        std::cout << std::endl;
-    }
 }
-
 
 /*
  * Sets the board state given an 8x8 char array where 'w' indicates a white

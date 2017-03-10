@@ -33,7 +33,8 @@ void Dtree::deleteNode(Dnode * node)
 	}
 
 	delete node->board;
-	delete node->move;
+	if (node->move != nullptr)
+		delete node->move;
 	delete node;
 }
 
@@ -44,6 +45,7 @@ void Dtree::deleteNode(Dnode * node)
 void Dtree::FindMoves(Dnode * node, Side s)
 {
 	// No moves available.
+
 	if (!(node->black_avail && node->white_avail))
 		return;
 
@@ -55,8 +57,18 @@ void Dtree::FindMoves(Dnode * node, Side s)
 
 	Board * newboard = (node->board)->copy();
 
+	/*if (s == BLACK)
+	{
+		std::cerr << "black" << std::endl;
+	}
+	else
+	{
+		std::cerr << "white" << std::endl;
+	}*/
+
 	for (int i = left; i <= right; i++)
 	{
+		//bool is_valid;
 		for (int j = up; j <= down; j++)
 		{
 			Move * newmove = new Move(i, j);
@@ -65,11 +77,18 @@ void Dtree::FindMoves(Dnode * node, Side s)
 				Dnode * newDnode = new Dnode(newboard, newmove, s);
 				(node->move_lst).push_back(newDnode);
 				newboard = (node->board)->copy();
+				//is_valid = true;
 			}
 			else
 			{
+				is_valid = false;
 				delete newmove;
 			}
+			/*std::cerr << "Move: (" << i << ", " << j << ")";
+			if (is_valid)
+				std::cerr << " is valid" << std::endl;
+			else
+				std::cerr << " is not valid" << std::endl;*/
 		}
 	}
 
@@ -90,7 +109,15 @@ void Dtree::FindMoves(Dnode * node, Side s)
 void Dtree::init_FindMoves(Side s)
 {
 	Side other = (s == BLACK) ? WHITE : BLACK;
+
 	FindMoves(head, s);
+
+	if ((head->move_lst).empty())
+	{
+		FindMoves(head, other);
+		return;
+	}
+
 	for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
 	{
 		FindMoves(*i, other);
@@ -146,8 +173,8 @@ void Dtree::DoMove(Move * m)
 	{
 		int X = ((*i)->move)->getX();
 		int Y = ((*i)->move)->getY();
-		if ((x != X) || (y != Y))
-			deleteNode((*i));
+		if ((x != X) || (y != Y)){
+			deleteNode((*i));}
 		else
 			newhead = *i;
 	}

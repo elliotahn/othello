@@ -52,7 +52,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    if (dtree->has_moves())
+    std::cerr << "hello1" << std::endl;
+    if (dtree->no_children())
     {
         Side other = (pside == BLACK) ? WHITE : BLACK;
         dtree->SimpleDoMove(opponentsMove, other);
@@ -61,9 +62,30 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     {
         dtree->DoMove(opponentsMove);
     }
+
+    std::cerr << "After white's move" << std::endl;
+
+    dtree->printboard();
     dtree->init_FindMoves(pside);
 
+    std::cerr << "hello3" << std::endl;
+    if (dtree->no_children())
+    {
+        std::cerr << "serial" << std::endl;
+        return NULL;
+    }
+
+    std::cerr << "serial2" << std::endl;
+
     Move * return_move = dtree->chooseMove(pside);
+
+    std::cerr << ((dtree->head)->move_lst).size() << std::endl;
+
+    std::cerr << "after blacks move" << std::endl;
+
+    dtree->printboard();
+
+    std::cerr << "weird" << std::endl;
 
     return return_move;
 }

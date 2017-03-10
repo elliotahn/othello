@@ -43,7 +43,7 @@ public:
 	Dtree(Side s);
 	Dtree(Board * b, Move * m, Side s);
 	~Dtree();
-	bool has_moves() {return (head->move_lst).empty();}
+	bool no_children() {return (head->move_lst).empty();}
 	void deleteNode(Dnode * node);
 	void FindMoves(Dnode * node, Side s);
 	void init_FindMoves(Side s);
