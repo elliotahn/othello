@@ -19,10 +19,10 @@ Board::Board() {
     black.set(4 + 8 * 3);
     black.set(3 + 8 * 4);
 
-    left = 2;
+  /*  left = 2;
     right = 5;
     up = 2;
-    down = 5;
+    down = 5;*/
 }
 
 /*
@@ -38,10 +38,10 @@ Board *Board::copy() {
     Board *newBoard = new Board();
     newBoard->black = black;
     newBoard->taken = taken;
-    newBoard->up = up;
+   /* newBoard->up = up;
     newBoard->down = down;
     newBoard->left = left;
-    newBoard->right = right;
+    newBoard->right = right;*/
     return newBoard;
 }
 
@@ -75,8 +75,8 @@ bool Board::isDone() {
  * Returns true if there are legal moves for the given side.
  */
 bool Board::hasMoves(Side side) {
-    for (int i = left; i <= right; i++) {
-        for (int j = up; j <= down; j++) {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
             Move move(i, j);
             if (checkMove(&move, side)) return true;
         }
@@ -132,7 +132,7 @@ void Board::doMove(Move *m, Side side) {
     int Y = m->getY();
 
     // Change the valid-move rectangle boundary.
-    if (X == left) {
+    /*if (X == left) {
         if (left != 0)
             left--;
     }
@@ -147,7 +147,7 @@ void Board::doMove(Move *m, Side side) {
     else if (Y == down) {
         if (down != 7)
             down++;
-    }
+    }*/
 
     Side other = (side == BLACK) ? WHITE : BLACK;
     for (int dx = -1; dx <= 1; dx++) {
@@ -226,14 +226,18 @@ bool Board::makeMove(Move *m, Side side)
             // Make sure the pieces along this direction is from the other
             // player.
             if (onBoard(x, y) && get(other, x, y))
-            {
+            {   
                 do {
+                    std::cerr << "change size: " << change.size() << std::endl;
+    
+                    std::cerr << "x = " << x << "   " << "y = " << y << std::endl;
+                    std::cerr <<  &change << std::endl;
                     change.push_back(x + 8 * y);
+                    std::cerr << "kobe" << std::endl;
                     x += dx;
                     y += dy;
                 }
                     while (onBoard(x, y) && get(other, x, y));
-
                 // When the piece along this direction is not from the
                 // other player, it better be the current player's piece.
                 if (onBoard(x, y) && get(side, x, y))
@@ -248,7 +252,7 @@ bool Board::makeMove(Move *m, Side side)
                         black[X + 8 * Y] = 1;
 
                     // Update the valid move boundary of the board.
-                    if (X == left) {
+                    /*if (X == left) {
                         if (left != 0)
                             left--;
                     }
@@ -263,12 +267,13 @@ bool Board::makeMove(Move *m, Side side)
                     else if (Y == down) {
                         if (down != 7)
                             down++;
-                    }
+                    }*/
                 }
                 change.clear();
             }
         }
     }
+    std::cerr << "done make" << std::endl;
     return valid;
 }
 
@@ -298,7 +303,7 @@ int Board::countWhite() {
  * left and right.
  */
 
-int Board::getup() {
+/*int Board::getup() {
     return up;
 }
 
@@ -328,7 +333,7 @@ void Board::setleft(int newleft) {
 
 void Board::setright(int newright) {
     right = newright;
-}
+}*/
 
 /*
  * Draws the current state of the board out for debugging purposes
@@ -368,48 +373,48 @@ void Board::draw()
 void Board::setBoard(char data[]) {
     taken.reset();
     black.reset();
-    up = 7;
+    /*up = 7;
     down = 0;
     left = 7;
-    right = 0;
+    right = 0;*/
     for (int i = 0; i < 64; i++) {
-        int x = i % 8;
-        int y = i / 8;
+        //int x = i % 8;
+        //int y = i / 8;
         if (data[i] == 'b') {
             taken.set(i);
             black.set(i);
 
             // Set the rectangular boundary of valid moves.
-            if (y < up)
+            /*if (y < up)
                 up = y;
             if (y > down)
                 down = y;
             if (x < left)
                 left = x;
             if (x > right)
-                right = x;
+                right = x;*/
         } if (data[i] == 'w') {
             taken.set(i);
 
             // Set the rectangular boundary of valid moves.
-            if (y < up)
+           /* if (y < up)
                 up = y;
             if (y > down)
                 down = y;
             if (x < left)
                 left = x;
             if (x > right)
-                right = x;
+                right = x;*/
         }
     }
-    if (up != 0)
+ /*   if (up != 0)
         up--;
     if (down != 7)
         down++;
     if (left != 0)
         left--;
     if (right != 7)
-        right++;
+        right++;*/
 }
 
 /*

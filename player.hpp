@@ -7,6 +7,7 @@ class Player {
 private:
 	//Dtree * dtree;
 	Side pside;
+    Side other;
 public:
 
 	Dtree * dtree;

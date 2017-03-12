@@ -46,5 +46,7 @@ int main(int argc, char *argv[]) {
         std::cout << ", expected (1, 1)" << std::endl;
     }
 
+    delete player;
+
     return 0;
 }

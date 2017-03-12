@@ -14,10 +14,10 @@ private:
     bitset<64> taken;
 
     // Rectangular boundary of available moves.
-    int up;
+   /* int up;
     int down;
     int left;
-    int right;
+    int right;*/
 
     bool occupied(int x, int y);
     bool get(Side side, int x, int y);
@@ -38,14 +38,14 @@ public:
     int count(Side side);
     int countBlack();
     int countWhite();
-    int getup();
+    /*int getup();
     int getdown();
     int getleft();
     int getright();
     void setup(int newup);
     void setdown(int newdown);
     void setleft(int newleft);
-    void setright(int newright);
+    void setright(int newright);*/
     void draw();
 
     void setBoard(char data[]);

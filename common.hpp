@@ -2,7 +2,7 @@
 #define __COMMON_HPP__
 
 enum Side { 
-    WHITE, BLACK
+    WHITE, BLACK, UNKNOWN
 };
 
 class Move {

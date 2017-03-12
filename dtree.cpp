@@ -1,11 +1,11 @@
 #include "dtree.hpp"
 
-Dtree::Dtree(Side s)
+Dtree::Dtree()
 {
 	head = new Dnode;
 	head->board = new Board;
 	head->move = nullptr;
-	head->side = s;
+	head->side = UNKNOWN;
 }
 
 Dtree::Dtree(Board * b, Move * m, Side s)
@@ -42,85 +42,108 @@ void Dtree::deleteNode(Dnode * node)
  * Add children to a given node.
  */
 
-void Dtree::FindMoves(Dnode * node, Side s)
+void Dtree::FindMoves(Dnode * node)
 {
 	// No moves available.
 
 	if (!(node->black_avail && node->white_avail))
 		return;
 
+	bool valid = false;
+	Side s = ((node->side) == BLACK) ? WHITE : BLACK;
+	Side other = node->side;
+
 	// Get valid_move rectangle.
-	int up = (node->board)->getup();
+/*	int up = (node->board)->getup();
 	int down = (node->board)->getdown();
 	int left = (node->board)->getleft();
-	int right = (node->board)->getright();
+	int right = (node->board)->getright();*/
 
 	Board * newboard = (node->board)->copy();
 
-	/*if (s == BLACK)
+	for (int i = 0; i < 8; i++)
 	{
-		std::cerr << "black" << std::endl;
-	}
-	else
-	{
-		std::cerr << "white" << std::endl;
-	}*/
-
-	for (int i = left; i <= right; i++)
-	{
-		//bool is_valid;
-		for (int j = up; j <= down; j++)
+		for (int j = 0; j < 8; j++)
 		{
 			Move * newmove = new Move(i, j);
 			if (newboard->makeMove(newmove, s))
 			{
 				Dnode * newDnode = new Dnode(newboard, newmove, s);
+
 				(node->move_lst).push_back(newDnode);
+
 				newboard = (node->board)->copy();
-				//is_valid = true;
+				valid = true;
 			}
 			else
 			{
-				//is_valid = false;
 				delete newmove;
 			}
-			/*std::cerr << "Move: (" << i << ", " << j << ")";
-			if (is_valid)
-				std::cerr << " is valid" << std::endl;
-			else
-				std::cerr << " is not valid" << std::endl;*/
+
 		}
 	}
 
-	if ((node->move_lst).empty())
-	{
-		if (s == BLACK)
-			node->black_avail = false;
-		else
-			node->white_avail = false;
-	}
 	delete newboard;
+
+	if (valid)
+		return;
+	
+	if (s == BLACK)
+		node->black_avail = false;
+	else
+		node->white_avail = false;
+
+	valid = false;
+	
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			Move * newmove = new Move(i, j);
+			if (newboard->makeMove(newmove, other))
+			{
+				Dnode * newDnode = new Dnode(newboard, newmove, s);
+				(node->move_lst).push_back(newDnode);
+				newboard = (node->board)->copy();
+				valid = true;
+			}
+			else
+			{
+				delete newmove;
+			}
+		}
+	}
+
+	if (valid)
+	return;
+	
+	if (other == BLACK)
+		node->black_avail = false;
+	else
+		node->white_avail = false;
 }
 
 /*
  * Apply find moves to depth 2.
  */
 
-void Dtree::init_FindMoves(Side s)
+void Dtree::expand()
 {
-	Side other = (s == BLACK) ? WHITE : BLACK;
-
-	FindMoves(head, s);
-
-	if ((head->move_lst).empty())
+	int depth = calculate_depth();
+	if (depth == 0)
 	{
-		FindMoves(head, other);
-		return;
+		FindMoves(head);
+		for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
+		{
+			std::cerr << ((*i)->move)->getX() << "  " << ((*i)->move)->getY() << std::endl;
+			FindMoves(*i);
+		}
 	}
-
-	for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
+	else if (depth == 1)
 	{
-		FindMoves(*i, other);
+		//std::cerr << "hello3" << std::endl;
+		for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
+			FindMoves(*i);
 	}
 }
 
@@ -175,7 +198,7 @@ void Dtree::DoMove(Move * m)
 		int Y = ((*i)->move)->getY();
 		if ((x != X) || (y != Y)){
 			deleteNode((*i));}
-		else
+		else 
 			newhead = *i;
 	}
 
@@ -206,7 +229,36 @@ int Dtree::getWorstScore(Dnode * node, Side s)
 	return worst_score;
 }
 
+int Dtree::calculate_depth()
+{
+	if ((head->move_lst).empty())
+		return 0;
+
+	for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
+	{
+		if (!((*i)->move_lst).empty())
+			return 2; // This is the max depth we allow.
+	}
+
+	return 1;
+}
+
 void Dtree::printboard()
 {
 	(head->board)->draw();
+}
+
+void Dtree::print_next()
+{
+	if (head->side == BLACK)
+		std::cerr << "\nMOVE LIST BLACK" << std::endl;
+	else
+		std::cerr << "\nMOVE LIST WHITE" << std::endl;
+	
+	for (auto i = (head->move_lst).begin(); i != (head->move_lst).end(); i++)
+	{
+		((*i)->board)->draw();
+		std::cerr << std::endl;
+	}
+	std::cerr << "END LIST\n" << std::endl;
 }

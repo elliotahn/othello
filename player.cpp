@@ -9,6 +9,7 @@ Player::Player(Side side, Board * board) {
     // Will be set to true in test_minimax.cpp.
     dtree = new Dtree(board, nullptr, side);
     pside = side;
+    other = (side == BLACK) ? WHITE : BLACK;
 
     testingMinimax = false;
 
@@ -21,8 +22,9 @@ Player::Player(Side side, Board * board) {
 }
 
 Player::Player(Side side) {
-    dtree = new Dtree(side);
+    dtree = new Dtree();
     pside = side;
+    other = (side == BLACK) ? WHITE : BLACK;
 
     testingMinimax = false;
 }
@@ -52,40 +54,68 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    std::cerr << "hello1" << std::endl;
-    if (dtree->no_children())
+    Move * opmove;
+    std::cerr << "\n----NEW ROUND-----" << std::endl;
+
+    if (opponentsMove == nullptr) {
+        std::cerr << "white: null" << std::endl;
+        opmove = nullptr;
+    }
+    else {
+        int X = opponentsMove->getX();
+        int Y = opponentsMove->getY();
+        opmove = new Move(X, Y);
+        std::cerr << "white:\t" << X << "   " << Y << std::endl;
+    }
+
+    std::cerr << dtree->calculate_depth() << std::endl;
+
+    if (dtree->calculate_depth() == 0)
     {
-        Side other = (pside == BLACK) ? WHITE : BLACK;
-        dtree->SimpleDoMove(opponentsMove, other);
+        if ((dtree->head)->side == UNKNOWN)
+        {
+            dtree->SimpleDoMove(opmove, other);
+            (dtree->head)->side = other;
+        }
     }
     else
     {
-        dtree->DoMove(opponentsMove);
+        dtree->DoMove(opmove);
     }
 
-    std::cerr << "After white's move" << std::endl;
+    // std::cerr << dtree->calculate_depth() << std::endl;
+
+    // std::cerr << "After White's move" << std::endl;
 
     dtree->printboard();
-    dtree->init_FindMoves(pside);
 
-    std::cerr << "hello3" << std::endl;
-    if (dtree->no_children())
-    {
-        std::cerr << "serial" << std::endl;
-        return NULL;
-    }
+    dtree->expand();
 
-    std::cerr << "serial2" << std::endl;
+
+
+    // dtree->print_next();
+
+    // std::cerr << dtree->calculate_depth() << std::endl;
+
+    if (dtree->calculate_depth() == 0)
+        return nullptr;
 
     Move * return_move = dtree->chooseMove(pside);
 
-    std::cerr << ((dtree->head)->move_lst).size() << std::endl;
+    // if (return_move == nullptr)
+    //     std::cerr << "black: null" << std::endl;
+    // else {
+    //     int X1 = return_move->getX();
+    //     int Y1 = return_move->getY();
+    //     std::cerr << "black:\t" << X1 << "   " << Y1 << std::endl;
+    // }
 
-    std::cerr << "after blacks move" << std::endl;
+    // std::cerr << dtree->calculate_depth() << std::endl;
 
-    dtree->printboard();
+    // std::cerr << "After Black's move" << std::endl;
 
-    std::cerr << "weird" << std::endl;
+    // dtree->printboard();
 
+    // std::cerr << return_move << std::endl;
     return return_move;
 }

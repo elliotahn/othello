@@ -14,7 +14,7 @@
 struct Dnode {
 	Board * board;
 	Move * move;
-	Side side;
+	Side side;					// Player who made the last move.
 	bool black_avail;
 	bool white_avail;
 	vector<Dnode *> move_lst;
@@ -23,6 +23,7 @@ struct Dnode {
 	{
 		black_avail = true;
 		white_avail = true;
+		this->side = UNKNOWN;
 	}
 
 	Dnode(Board * b, Move * m, Side s)
@@ -40,18 +41,20 @@ private:
 	//Dnode * head;
 public:
 	Dnode * head;
-	Dtree(Side s);
+	Dtree();
 	Dtree(Board * b, Move * m, Side s);
 	~Dtree();
 	bool no_children() {return (head->move_lst).empty();}
 	void deleteNode(Dnode * node);
-	void FindMoves(Dnode * node, Side s);
-	void init_FindMoves(Side s);
+	void FindMoves(Dnode * node);
+	void expand();
 	Move * chooseMove(Side s);
 	void SimpleDoMove(Move * m, Side s);
 	void DoMove(Move * m);
 	int getWorstScore(Dnode * mode, Side s);
+	int calculate_depth();
 	void printboard();
+	void print_next();
 };
 
 #endif
