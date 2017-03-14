@@ -1,6 +1,6 @@
 CC          = g++
 CFLAGS      = -std=c++11 -Wall -pedantic -ggdb
-OBJS        = player.o board.o dtree.o
+OBJS        = player.o board.o
 PLAYERNAME  = kobe_is_the_goat
 
 all: $(PLAYERNAME) testgame
@@ -9,6 +9,9 @@ $(PLAYERNAME): $(OBJS) wrapper.o
 	$(CC) -o $@ $^
 
 testgame: testgame.o
+	$(CC) -o $@ $^
+
+testing: $(OBJS) testing.o
 	$(CC) -o $@ $^
 
 testminimax: $(OBJS) testminimax.o
