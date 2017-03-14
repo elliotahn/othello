@@ -43,6 +43,15 @@ Player::~Player() {
     }
 }
 
+/*
+ * Minimax algorithm which goes down to depth 2 in the recursion tree.
+ * This function calls another minimax function which can be set
+ * to higher depth.
+ *
+ * parameter: move_lst - list of moves the player can make.
+ * returns  : the player's chosen move.
+ */
+
 Move * Player::minimax1(vector<Move *> move_lst)
 {
     int num_moves = (int) move_lst.size();
@@ -50,13 +59,14 @@ Move * Player::minimax1(vector<Move *> move_lst)
     int * min_score = new int[num_moves];
     int worst_score;
 
+    // Iterate through the player's available moves.
     for (int i = 0; i < num_moves; i++)
     {
         // Save the initial board state and apply a valid move..
         Board * testboard = board->copy();
         testboard->doMove(move_lst[i], pside);
 
-        // List of opponent's moves.
+        // List of opponent's moves given the player's move.
         vector<Move*> op_moves_lst = testboard->valid_moves(other);
         min_score[i] = 100000000;
 
@@ -93,6 +103,7 @@ Move * Player::minimax1(vector<Move *> move_lst)
         delete testboard;
     }
 
+    // Find the maximum score of the set of minimum scores.
     int max_min = -1000000;
     int ind = -1;
     for (int i = 0; i < num_moves; i++)
@@ -107,6 +118,16 @@ Move * Player::minimax1(vector<Move *> move_lst)
     delete[] min_score;
     return move_lst[ind];
 }
+
+/*
+ * This function gets goes to deeper depths in the minimax tree.
+ *
+ * Parameter : Board b - state of the board
+ * Parameter : move_lst - lists of moves the player can make
+ * Parameter : times - integer which determines recursion. Goes to depth
+ *                     2 * (3 - times).
+ * Output    : integer that represents the worst possible score.
+ */
 
 int Player::minimax2(vector<Move *> move_lst, Board * b, int times)
 {
@@ -183,15 +204,20 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
+
+    // Apply opponent's move.
     board->doMove(opponentsMove, other);
 
+    // Determine the depth we want to calculate our minimax tree.
     if ((board->gettaken()).count() > 58)
         depth = 0;
     else
         depth = 1;
 
+    // Get set of moves.
     vector<Move *> move_lst = get_moves(board, pside);
 
+    // Return the best move.
     if (!(move_lst.empty()))
     {
         Move * best_move = minimax1(move_lst);
@@ -199,28 +225,46 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         return best_move;
     }
 
+    // If we can't make moves, return null.
     return nullptr;
 }
 
+/*
+ * Get a list of moves for the player given the board state. To prevent
+ * redundant calculations, keep a memoization system.
+ *
+ * Input : board state, side of player.
+ * Return: vector of available moves.
+ */
 vector<Move *> Player::get_moves(Board * board, Side side)
 {
+    // Generate the key for the given board state.
     string key = convert(board, side);
 
+    // Search for the key in the memoization table.
     unordered_map<string, vector<Move *>>::const_iterator got;
     got = memo.find(key);
 
+    // If key is not found, search explicitly for available moves and
+    // add it to the memoization.
     if (got == memo.end()) {
         vector<Move *> to_add = board->valid_moves(side);
         pair<string, vector<Move *>> newpair(key, to_add);
         memo.insert(newpair);
         return to_add;
     }
+    // Otherwise, return what we found in the memo.
     else
     {
         return got->second;
     }
 }
 
+
+/*
+ * Convert the board state to its corresponding key string.
+ */
+ 
 string convert(Board * board, Side side)
 {
     string ret_string;

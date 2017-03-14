@@ -7,9 +7,14 @@
 
 class Player {
 private:
+    // The board the player keeps track of.
     Board * board;
-	Side pside;
-    Side other;
+
+	Side pside;    // Side of the player
+    Side other;    // Side of the opponent
+
+    // Memoization which keeps track of available moves given the board
+    // settings. The board status is encoded into a unique string.
     unordered_map<string, vector<Move *>> memo;
 public:
     int depth;
